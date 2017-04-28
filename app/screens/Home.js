@@ -20,20 +20,10 @@ class Home extends React.Component {
     return (
       <View style={styles.container}>
         <Camera
-
          style={styles.preview}
          aspect={Camera.constants.Aspect.fill}>
          <Text style={styles.capture} >[CAPTURE]</Text>
        </Camera>
-      </View>
-      <View style={styles.container}>
-        <Text style={styles.title}>HOME</Text>
-        <TouchableOpacity onPress={()=>navigator.push({component: Settings})}>
-          <Text style={styles.link}>Settings >></Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={()=>navigator.push({component: Album})}>
-          <Text style={styles.link}>Album >></Text>
-        </TouchableOpacity>
       </View>
     );
     }
