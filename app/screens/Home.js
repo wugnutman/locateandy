@@ -17,7 +17,45 @@ class Home extends React.Component {
 
   state = {
     isVideoMode: true,
-    isCompassMode: true
+    isCompassMode: true,
+    camera: {
+      aspect: Camera.constants.Aspect.fill,
+      captureTarget: Camera.constants.CaptureTarget.cameraRoll,
+      type: Camera.constants.Type.back,
+      orientation: Camera.constants.Orientation.auto,
+      flashMode: Camera.constants.FlashMode.auto,
+    },
+    isRecording: false
+  }
+
+  takePicture = () => {
+    if (this.camera) {
+      this.camera.capture()
+        .then((data) => console.log(data))
+        .catch(err => console.error(err));
+    }
+  }
+
+  startRecordingVideo = () => {
+    if (this.camera) {
+      this.camera.capture({mode: Camera.constants.CaptureMode.video})
+          .then((data) => console.log(data))
+          .catch(err => console.error(err));
+
+
+      this.setState({
+        isRecording: true
+      });
+    }
+  }
+
+  stopRecordingVideo = () => {
+    if (this.camera) {
+      this.camera.stopCapture();
+      this.setState({
+        isRecording: false
+      });
+    }
   }
 
   onPressAlbumButton(){
@@ -47,10 +85,29 @@ class Home extends React.Component {
     let { navigator } = this.props
 
     return (
-      <Camera style={styles.container} aspect={Camera.constants.Aspect.fill}>
-        <View style={{flexDirection: 'row'}}>
-          <View style={styles.captureButton} />
-        </View>
+      <Camera
+        style={styles.container}
+        aspect={Camera.constants.Aspect.fill}
+        ref={(cam) => {
+          this.camera = cam;
+        }}>
+
+        {
+          this.state.isRecording ? (
+            <TouchableOpacity onPress={this.stopRecordingVideo}>
+              <View style={{flexDirection: 'row'}}>
+                <View style={styles.stopRecordingbtn} />
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity onPress={ this.state.isVideoMode ? this.startRecordingVideo : this.takePicture}>
+              <View style={{flexDirection: 'row'}}>
+                <View style={ this.state.isRecording ? styles.stopRecordingbtn : styles.captureButton} />
+              </View>
+            </TouchableOpacity>
+          )
+        }
+
         <View style={styles.menuContainer}>
           <TouchableOpacity onPress={this.onPressAlbumButton.bind(this)}>
             <Image
@@ -105,6 +162,12 @@ const styles = StyleSheet.create({
     width: 48,
     borderRadius: 48,
     backgroundColor: "#fff",
+    margin: 10
+  },
+  stopRecordingbtn: {
+    height: 40,
+    width: 40,
+    backgroundColor: "green",
     margin: 10
   },
   albumButton: {
